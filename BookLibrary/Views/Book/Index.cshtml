@@ -1,0 +1,71 @@
+﻿@model IEnumerable<BookLibrary.Models.Book>
+
+<h2>Book List</h2>
+
+<p>
+    @Html.ActionLink("Add New Book", "Create", null, new { @class = "btn btn-success btn-lg mb-3" })
+</p>
+
+<form asp-action="Index" method="get" class="form-inline my-2 my-lg-0">
+    <div class="input-group">
+        <input class="form-control mr-sm-2" type="search" name="searchString" placeholder="Search" aria-label="Search" value="@ViewData["CurrentFilter"]" />
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </div>
+        
+    </div>
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Title)
+                                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]">
+                    @(ViewData["TitleSortParm"] == "title_desc" ? " ▼" : " ▲")
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Author)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["AuthorSortParm"]">
+                    @(ViewData["AuthorSortParm"] == "author_desc" ? " ▼" : " ▲")
+                </a>
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => book.Title)</td>
+                <td>@Html.DisplayFor(modelItem => book.Author)</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-primary">Edit</a>
+                        <form asp-action="Details" asp-route-id="@book.Id">
+                            <button type="submit" class="btn btn-info">Details</button>
+                        </form>
+                        <button class="btn btn-danger" onclick="confirmDelete(@book.Id)">Delete</button>
+                    </div>
+                </td>
+            </tr>
+                <form id="deleteForm_@book.Id" asp-action="DeleteConfirmed" asp-route-id="@book.Id" method="post" style="display: none;">
+        @Html.AntiForgeryToken()
+    </form>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this book?')) {
+                // Proceed with deletion
+                document.getElementById('deleteForm_' + id).submit();
+            }
+        }
+    </script>
+}
