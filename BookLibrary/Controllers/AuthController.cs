@@ -7,21 +7,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookLibrary.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling user authentication and registration.
+    /// </summary>
     public class AuthController : Controller
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// </summary>
+        /// <param name="context">The database context.</param>
         public AuthController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Displays the registration view.
+        /// </summary>
+        /// <returns>The registration view.</returns>
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        /// <summary>
+        /// Handles the registration of a new user.
+        /// </summary>
+        /// <param name="model">The registration view model containing user details.</param>
+        /// <returns>
+        /// Redirects to the login view if registration is successful; otherwise, returns the registration view with validation errors.
+        /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -31,7 +49,8 @@ namespace BookLibrary.Controllers
                 var user = new User
                 {
                     Email = model.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(model.Password)
+                    Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                    Role = "Regular" // Assign default role
                 };
 
                 _context.Users.Add(user);
@@ -41,12 +60,23 @@ namespace BookLibrary.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Displays the login view.
+        /// </summary>
+        /// <returns>The login view.</returns>
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        /// <summary>
+        /// Handles user login.
+        /// </summary>
+        /// <param name="model">The login view model containing user credentials.</param>
+        /// <returns>
+        /// Redirects to the book index view if login is successful; otherwise, returns the login view with validation errors.
+        /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -58,8 +88,8 @@ namespace BookLibrary.Controllers
 
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
-                    // Możesz tutaj ustawić sesję lub plik cookie dla zalogowanego użytkownika
-                    return RedirectToAction("Index", "Book");
+                    // Set session or authentication cookie here if needed
+                    return RedirectToAction("Index", "Books");
                 }
                 ModelState.AddModelError("", "Invalid login attempt.");
             }
