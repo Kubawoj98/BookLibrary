@@ -62,7 +62,7 @@ namespace BookLibrary.Controllers
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Register", "Auth");
+                return RedirectToAction("Login", "Auth");
             }
             return View(model);
         }
@@ -96,7 +96,7 @@ namespace BookLibrary.Controllers
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
                     // Set session or authentication cookie here if needed
-                    return RedirectToAction("Login", "Auth");
+                    return RedirectToAction("Index", "Book");
                 }
                 else
                 {
