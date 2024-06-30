@@ -21,7 +21,8 @@ Przed uruchomieniem projektu upewnij się, że masz zainstalowane następujące 
 	- Kliknij na rozwiązanie w solutnion Explorer i wybierz "Restore NuGet Packages" 
 4. Migrację bazy danych: 
 	- Otwórz Package Manager Console i wykonaj polecenia:
-	a) Add-Migration InitialCreate
-	b) Update-Database
+	```sh
+ 	 Add-Migration InitialCreate
+	 Update-Database
 	
 ## Uruchom aplikację w Visual Studio
