@@ -1,39 +1,41 @@
 ﻿@model IEnumerable<BookLibrary.Models.Book>
 
-<h2>Book List</h2>
+<h2 class="mb-4">Book List</h2>
 
 <p>
-    @Html.ActionLink("Add New Book", "Create", null, new { @class = "btn btn-success btn-lg mb-3" })
+    <a asp-action="Create" class="btn btn-primary btn-lg mb-3">Add New Book</a>
 </p>
 
-<form asp-action="Index" method="get" class="form-inline my-2 my-lg-0">
-    <div class="input-group">
-        <input class="form-control mr-sm-2" type="search" name="searchString" placeholder="Search" aria-label="Search" value="@ViewData["CurrentFilter"]" />
-        <div class="input-group-prepend">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </div>
-        
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form asp-action="Index" method="get" class="form-inline my-2 my-lg-0">
+            <div class="input-group">
+                <input class="form-control" type="search" name="searchString" placeholder="Search" aria-label="Search" value="@ViewData["CurrentFilter"]" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
-
-<table class="table">
-    <thead>
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.FirstOrDefault().Title)
-                                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]">
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]">
                     @(ViewData["TitleSortParm"] == "title_desc" ? " ▼" : " ▲")
                 </a>
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.FirstOrDefault().Author)
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["AuthorSortParm"]">
                     @(ViewData["AuthorSortParm"] == "author_desc" ? " ▼" : " ▲")
                 </a>
             </th>
 
-            <th></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -45,16 +47,14 @@
                 <td>
                     <div class="btn-group" role="group">
                         <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-primary">Edit</a>
-                        <form asp-action="Details" asp-route-id="@book.Id">
-                            <button type="submit" class="btn btn-info">Details</button>
-                        </form>
+                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-info">Details</a>
                         <button class="btn btn-danger" onclick="confirmDelete(@book.Id)">Delete</button>
                     </div>
                 </td>
             </tr>
-                <form id="deleteForm_@book.Id" asp-action="DeleteConfirmed" asp-route-id="@book.Id" method="post" style="display: none;">
-        @Html.AntiForgeryToken()
-    </form>
+            <form id="deleteForm_@book.Id" asp-action="DeleteConfirmed" asp-route-id="@book.Id" method="post" style="display: none;">
+                @Html.AntiForgeryToken()
+            </form>
         }
     </tbody>
 </table>
