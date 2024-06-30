@@ -95,7 +95,6 @@ namespace BookLibrary.Controllers
                 // Check if user exists
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
-                    // Set session or authentication cookie here if needed
                     return RedirectToAction("Index", "Book");
                 }
                 else
