@@ -46,6 +46,13 @@ namespace BookLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Check if an identical user already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("", "User already exist.");
+                    return View(model);
+                }
                 var user = new User
                 {
                     Email = model.Email,
@@ -55,7 +62,7 @@ namespace BookLibrary.Controllers
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Login", "Auth");
+                return RedirectToAction("Register", "Auth");
             }
             return View(model);
         }
@@ -83,15 +90,18 @@ namespace BookLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Email == model.Email);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
 
+                // Check if user exists
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
                     // Set session or authentication cookie here if needed
-                    return RedirectToAction("Index", "Books");
+                    return RedirectToAction("Login", "Auth");
                 }
-                ModelState.AddModelError("", "Invalid login attempt.");
+                else
+                {
+                    ModelState.AddModelError("", "Invalid email or password.");
+                }
             }
             return View(model);
         }
